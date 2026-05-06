@@ -11,7 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/AdvanceLevel.unity
     guid: 3343043aad504974982a9a65d761156b
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/ExpertLevel.unity
     guid: 60d5ad4ad26e4c649b6b61b15c1ee548
   m_configObjects:

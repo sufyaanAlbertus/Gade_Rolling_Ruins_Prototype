@@ -1,19 +1,21 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-
 [RequireComponent(typeof(NavMeshAgent))]
 public abstract class EnemyBase : MonoBehaviour
 {
     [Header("Enemy Stats")]
-    public float speed      = 3.5f;
-    public float size       = 1.0f;   // Used to scale the GameObject
+    public float speed = 3.5f;
+    public float size = 1.0f;
     public Color enemyColor = Color.red;
 
     [Header("Detection")]
     public float detectionRange = 5f;
 
-    // Cached NavMeshAgent
+    // Cooldown prevents multiple LoseLife() calls from one contact
+    private float _hitCooldown = 0f;
+    private const float HIT_COOLDOWN_TIME = 1.5f;
+
     protected NavMeshAgent _agent;
 
     // -----------------------------------------------------------------------
@@ -27,11 +29,9 @@ public abstract class EnemyBase : MonoBehaviour
 
     protected virtual void Start()
     {
-        // Apply stats from factory
-        _agent.speed = speed;
+        if (_agent != null) _agent.speed = speed;
         transform.localScale = Vector3.one * size;
 
-        // Apply colour to renderer if present
         Renderer rend = GetComponentInChildren<Renderer>();
         if (rend != null)
         {
@@ -44,20 +44,16 @@ public abstract class EnemyBase : MonoBehaviour
 
     protected virtual void Update()
     {
+        if (_hitCooldown > 0f) _hitCooldown -= Time.deltaTime;
         Move();
     }
 
     // -----------------------------------------------------------------------
-    // Abstract methods — MUST be implemented by each enemy subclass
+    // Abstract
     // -----------------------------------------------------------------------
 
-    
     public abstract void Move();
-
-
     public abstract void Attack();
-
-
     public abstract void Die();
 
     protected virtual void OnSpawn()
@@ -65,22 +61,39 @@ public abstract class EnemyBase : MonoBehaviour
         Debug.Log($"[EnemyBase] {gameObject.name} spawned. Speed={speed} Size={size}");
     }
 
- 
-    protected virtual void OnTriggerEnter(Collider other)
+    // -----------------------------------------------------------------------
+    // Player contact — all four collision/trigger types covered
+    // -----------------------------------------------------------------------
+
+    private void HitPlayer()
     {
-        if (other.CompareTag("Player"))
-        {
-            Debug.Log($"[EnemyBase] {name} contacted player — player dies.");
-            GameManager.Instance?.LoseLife();
-        }
+        if (_hitCooldown > 0f) return;
+        _hitCooldown = HIT_COOLDOWN_TIME;
+        Debug.Log($"[EnemyBase] {name} hit player — losing life.");
+        GameManager.Instance?.LoseLife();
     }
 
+    // 3D trigger (Is Trigger = ON)
+    protected virtual void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player")) HitPlayer();
+    }
+
+    // 3D solid collider (Is Trigger = OFF) — this is what NavMeshAgent enemies use
+    protected virtual void OnCollisionEnter(Collision collision)
+    {
+        if (collision.collider.CompareTag("Player")) HitPlayer();
+    }
+
+    // 2D trigger
     protected virtual void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
-        {
-            Debug.Log($"[EnemyBase] {name} contacted player — player dies.");
-            GameManager.Instance?.LoseLife();
-        }
+        if (other.CompareTag("Player")) HitPlayer();
+    }
+
+    // 2D solid collider
+    protected virtual void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.collider.CompareTag("Player")) HitPlayer();
     }
 }

@@ -1,123 +1,125 @@
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class ThirdPersonCameraController : MonoBehaviour
 {
-    [Header("=== Target ===")]
+    [Header("Target")]
     [SerializeField] private Transform target;
     [SerializeField] private Vector3 targetOffset = new Vector3(0f, 1.8f, 0f);
 
-    [Header("=== Distance & Zoom ===")]
-    [SerializeField] private float defaultDistance = 7.5f;
-    [SerializeField] private float minDistance = 2.5f;
-    [SerializeField] private float maxDistance = 14f;
-    [SerializeField] private float zoomSpeed = 8f;
+    [Header("Distance (Fixed)")]
+    [SerializeField] private float distance = 6.5f;
 
-    [Header("=== Rotation ===")]
-    [SerializeField] private float rotationSpeed = 180f;
-    [SerializeField] private float verticalMinAngle = -20f;
-    [SerializeField] private float verticalMaxAngle = 65f;
-    [SerializeField] private float smoothTime = 0.12f;
+    [Header("Rotation")]
+    [SerializeField] private float mouseSensitivity = 3f;
+    [SerializeField] private float controllerSensitivity = 180f;
+    [SerializeField] private float verticalMinAngle = -25f;
+    [SerializeField] private float verticalMaxAngle = 70f;
 
-    [Header("=== Collision ===")]
-    [SerializeField] private bool enableCollision = true;
-    [SerializeField] private LayerMask collisionLayers = ~0;
-    [SerializeField] private float collisionBuffer = 0.3f;
+    [Header("Smoothing")]
+    [SerializeField] private float positionSmoothTime = 0.06f;
+    [SerializeField] private float rotationSmoothSpeed = 12f;
 
-    [Header("=== Input ===")]
+    [Header("Input")]
     [SerializeField] private bool invertY = false;
 
-    private float currentYaw;
-    private float currentPitch;
-    private float currentDistance;
+    private PlayerControls controls;
+    private Vector2 lookInput;
 
-    private Vector3 velocity;
+    private float yaw;
+    private float pitch;
+
+    private Vector3 positionVelocity;
 
     private void Awake()
     {
-        currentDistance = defaultDistance;
+        controls = new PlayerControls();
+    }
+
+    private void OnEnable()
+    {
+        controls.Enable();
+    }
+
+    private void OnDisable()
+    {
+        controls.Disable();
     }
 
     private void Start()
     {
         if (target == null)
         {
-            Debug.LogError("ThirdPersonCameraController: No target assigned!");
+            Debug.LogError("Camera missing target!");
             enabled = false;
             return;
         }
 
-        currentYaw = target.eulerAngles.y;
-        currentPitch = 20f;
+        yaw = target.eulerAngles.y;
+        pitch = 20f;
     }
 
     private void LateUpdate()
     {
-        if (target == null) return;
+        // 🔴 HARD STOP when game not running
+        if (GameManager.Instance == null || !GameManager.Instance.IsRunning())
+        {
+            lookInput = Vector2.zero;
+            return;
+        }
 
         HandleInput();
-        UpdateCameraPosition();
+        HandleRotation();
+        HandleCamera();
     }
 
     private void HandleInput()
     {
-        float mouseX = Input.GetAxis("Mouse X");
-        float mouseY = Input.GetAxis("Mouse Y");
-
-        if (invertY) mouseY = -mouseY;
-
-        currentYaw += mouseX * rotationSpeed * Time.deltaTime;
-        currentPitch -= mouseY * rotationSpeed * Time.deltaTime;
-
-        currentPitch = Mathf.Clamp(currentPitch, verticalMinAngle, verticalMaxAngle);
-
-        float scroll = Input.GetAxis("Mouse ScrollWheel");
-
-        if (Mathf.Abs(scroll) > 0.01f)
-        {
-            currentDistance -= scroll * zoomSpeed;
-            currentDistance = Mathf.Clamp(currentDistance, minDistance, maxDistance);
-        }
+        lookInput = controls.Player.Look.ReadValue<Vector2>();
     }
 
-    private void UpdateCameraPosition()
+    private void HandleRotation()
     {
-        Quaternion rotation = Quaternion.Euler(currentPitch, currentYaw, 0);
+        bool isGamepad = Gamepad.current != null && Gamepad.current.wasUpdatedThisFrame;
+        float sensitivity = isGamepad ? controllerSensitivity : mouseSensitivity;
 
+        float deltaX = lookInput.x * sensitivity * Time.deltaTime;
+        float deltaY = lookInput.y * sensitivity * Time.deltaTime;
+
+        if (invertY) deltaY = -deltaY;
+
+        yaw += deltaX;
+        pitch -= deltaY;
+
+        pitch = Mathf.Clamp(pitch, verticalMinAngle, verticalMaxAngle);
+    }
+
+    private void HandleCamera()
+    {
         Vector3 targetPoint = target.position + targetOffset;
 
-        Vector3 desiredPosition = targetPoint + rotation * new Vector3(0, 0, -currentDistance);
+        Quaternion rotation = Quaternion.Euler(pitch, yaw, 0f);
 
-        if (enableCollision)
-        {
-            Vector3 direction = (desiredPosition - targetPoint).normalized;
-
-            if (Physics.SphereCast(targetPoint, 0.4f, direction, out RaycastHit hit, currentDistance, collisionLayers))
-            {
-                float correctedDistance = hit.distance - collisionBuffer;
-                correctedDistance = Mathf.Clamp(correctedDistance, minDistance, maxDistance);
-
-                desiredPosition = targetPoint + rotation * new Vector3(0, 0, -correctedDistance);
-            }
-        }
+        Vector3 desiredPosition = targetPoint + rotation * new Vector3(0, 0, -distance);
 
         transform.position = Vector3.SmoothDamp(
             transform.position,
             desiredPosition,
-            ref velocity,
-            smoothTime
+            ref positionVelocity,
+            positionSmoothTime
         );
 
-        transform.LookAt(targetPoint);
+        Quaternion lookRot = Quaternion.LookRotation(targetPoint - transform.position);
+
+        transform.rotation = Quaternion.Slerp(
+            transform.rotation,
+            lookRot,
+            rotationSmoothSpeed * Time.deltaTime
+        );
     }
 
     public void SetTarget(Transform newTarget)
     {
         target = newTarget;
-    }
-
-    public void ResetToBehindPlayer(float yawOffset = 0f)
-    {
-        currentYaw = target.eulerAngles.y + yawOffset;
-        currentPitch = 18f;
     }
 }

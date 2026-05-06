@@ -1,0 +1,45 @@
+{
+  "levelName": "Beginner",
+  "npcDialogues": [
+    {
+      "npcID": "npc_rocky",
+      "dialogueItems": [
+        {
+          "alertName": "Rocky the Stone",
+          "iconName": "icon_rocky",
+          "dialogue": "Hiya, Pip! Don't trip on the fence! My cousin tried to jump it once, but he's a rock, so he just went thump. You're much bouncier than us!"
+        }
+      ]
+    },
+    {
+      "npcID": "npc_flowers",
+      "dialogueItems": [
+        {
+          "alertName": "Flowers Popi",
+          "iconName": "icon_flowers",
+          "dialogue": "Ooh, look at the pretty flowers! If you roll over them, they make a tiny ding sound! Try to collect all the shiny gold coins—they're super sparkly!"
+        }
+      ]
+    },
+    {
+      "npcID": "npc_danger",
+      "dialogueItems": [
+        {
+          "alertName": "Danger Yellow",
+          "iconName": "icon_danger",
+          "dialogue": "Slow down, Pip! The bridge has some Bouncy Bombs on it. If you touch them, they go KABOOM and send you flying into the air! Just hop over them carefully, and you'll be okay. Good luck, little buddy!"
+        }
+      ]
+    },
+    {
+      "npcID": "npc_flaggy",
+      "dialogueItems": [
+        {
+          "alertName": "Flaggy poo",
+          "iconName": "icon_flaggy",
+          "dialogue": "Yippee! You did it! You're the best roller in the whole world! Are you ready for more fun? Hop onto the Magic Portal next to me and we can go to Level Two for even more boinging and bouncing! Let's go!"
+        }
+      ]
+    }
+  ]
+}

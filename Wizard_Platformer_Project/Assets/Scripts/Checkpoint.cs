@@ -4,14 +4,14 @@ public class Checkpoint : MonoBehaviour
 {
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (!other.CompareTag("Player")) return;
+
+        PlayerRespawn playerRespawn = other.GetComponent<PlayerRespawn>();
+
+        if (playerRespawn != null)
         {
-            PlayerRespawn playerRespawn = other.GetComponent<PlayerRespawn>();
-            if (playerRespawn != null)
-            {
-                playerRespawn.currentCheckpoint = transform;
-                Debug.Log("Checkpoint reached: " + transform.name);
-            }
+            playerRespawn.SetCheckpoint(transform);
+            Debug.Log("Checkpoint reached: " + transform.name);
         }
     }
 }

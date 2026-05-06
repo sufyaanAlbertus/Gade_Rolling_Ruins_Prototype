@@ -7,7 +7,7 @@
         {
           "alertName": "Rocky the Stone",
           "iconName": "icon_rocky",
-          "dialogue": "Hiya, Pip! Don't trip on the fence! My cousin tried to jump it once, but he's a rock, so he just went thump. You're much bouncier than us!"
+          "dialogue": "Hiya Pip! Welcome to the adventure! Quick tip — press I on your keyboard or Down on the D-pad to see your controls anytime. Now watch your step, these platforms are bouncier than they look!"
         }
       ]
     },
@@ -17,7 +17,7 @@
         {
           "alertName": "Flowers Popi",
           "iconName": "icon_flowers",
-          "dialogue": "Ooh, look at the pretty flowers! If you roll over them, they make a tiny ding sound! Try to collect all the shiny gold coins—they're super sparkly!"
+          "dialogue": "Oh hello there, little roller! See those shiny gold coins sparkling everywhere? Collect them all — every single one! Roll over the flowers too, they make the most delightful little ding sound. Go on, try it!"
         }
       ]
     },
@@ -27,7 +27,7 @@
         {
           "alertName": "Danger Yellow",
           "iconName": "icon_danger",
-          "dialogue": "Slow down, Pip! The bridge has some Bouncy Bombs on it. If you touch them, they go KABOOM and send you flying into the air! Just hop over them carefully, and you'll be okay. Good luck, little buddy!"
+          "dialogue": "STOP RIGHT THERE, Pip! The bridge ahead has some nasty holes in it — one wrong roll and you'll plunge straight into the depths below! Take it slow, jump carefully over each gap, and you'll make it through just fine. You've got this!"
         }
       ]
     },
@@ -35,9 +35,9 @@
       "npcID": "npc_flaggy",
       "dialogueItems": [
         {
-          "alertName": "Flaggy poo",
+          "alertName": "Flaggy Poo",
           "iconName": "icon_flaggy",
-          "dialogue": "Yippee! You did it! You're the best roller in the whole world! Are you ready for more fun? Hop onto the Magic Portal next to me and we can go to Level Two for even more boinging and bouncing! Let's go!"
+          "dialogue": "Yippee! You actually did it! You found the key, made it past every obstacle, and rolled all the way here! You really are the greatest roller in the whole wide world! Now interact with the Magic Door right next to me and let's roll on to Level Two. Adventure awaits, Pip!"
         }
       ]
     }

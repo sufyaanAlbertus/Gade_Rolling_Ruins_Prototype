@@ -1,0 +1,25 @@
+{
+  "levelName": "Advanced",
+  "npcDialogues": [
+    {
+      "npcID": "npc_rescue",
+      "dialogueItems": [
+        {
+          "alertName": "Rolly Friend",
+          "iconName": "icon_rescue",
+          "dialogue": "Pip! Oh I'm so glad you found me! My Rolly friends are stuck on the other side of the icy section — it's freezing cold, dangerously slippery, and the enemies are patrolling every inch of it! Please help them! Find the golden key hidden somewhere on this level, dodge every enemy on the ice, and set them free. They've been waiting so long!"
+        }
+      ]
+    },
+    {
+      "npcID": "npc_hero",
+      "dialogueItems": [
+        {
+          "alertName": "Elder Rolly",
+          "iconName": "icon_hero",
+          "dialogue": "Pip... you came back. And you brought the others home safely. I knew there was something special about you the moment I saw you roll. The enemies grow stronger with every level, but so do you. Level Three holds dangers none of us have ever faced — but if anyone can get through it and save the Rolly world, it is you. Now go, brave roller. Go save us all!"
+        }
+      ]
+    }
+  ]
+}
